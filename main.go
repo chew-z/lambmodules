@@ -51,7 +51,7 @@ const (
 )
 
 // TODO - better handle gin HTTP codes
-func getLessonfromS3(c *gin.Context, n string) lesson {
+func GetLessonfromS3(c *gin.Context, n string) lesson {
 	var k lesson
 	var num int
 	if n == "" {
@@ -88,7 +88,7 @@ func getLessonfromS3(c *gin.Context, n string) lesson {
 }
 
 // TODO - for lesson get JSON, check if each partial exists and merge into mp3 lesson, save
-func createLesson(num int) lesson {
+func CreateLesson(num int) lesson {
 	var k lesson
 	fn := fmt.Sprintf("lesson_%d", num)
 	// Initialize AWS Session
