@@ -1,4 +1,4 @@
-package testmod
+package lambmodules
 
 import (
 	"bytes"
