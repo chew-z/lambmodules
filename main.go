@@ -19,7 +19,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/dmulholland/mp3lib"
 	"github.com/gin-gonic/gin"
-	cache "github.com/patrickmn/go-cache"
 )
 
 type partial struct {
@@ -55,7 +54,6 @@ const (
 func getLessonfromS3(c *gin.Context, n string) lesson {
 	var k lesson
 	var num int
-	cacheID := n
 	if n == "" {
 		num = 0
 	} else {
