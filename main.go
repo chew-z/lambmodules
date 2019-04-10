@@ -30,7 +30,7 @@ type partial struct {
 	AudioFilePath string
 }
 
-type lesson struct {
+type Lesson struct {
 	Iter      int
 	Title     string
 	Hash      string
@@ -51,8 +51,8 @@ const (
 )
 
 // TODO - better handle gin HTTP codes
-func GetLessonfromS3(c *gin.Context, n string) lesson {
-	var k lesson
+func GetLessonfromS3(c *gin.Context, n string) Lesson {
+	var k Lesson
 	var num int
 	if n == "" {
 		num = 0
@@ -88,8 +88,8 @@ func GetLessonfromS3(c *gin.Context, n string) lesson {
 }
 
 // TODO - for lesson get JSON, check if each partial exists and merge into mp3 lesson, save
-func CreateLesson(num int) lesson {
-	var k lesson
+func CreateLesson(num int) Lesson {
+	var k Lesson
 	fn := fmt.Sprintf("lesson_%d", num)
 	// Initialize AWS Session
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
@@ -100,7 +100,7 @@ func CreateLesson(num int) lesson {
 		log.Println("Found JSON ", fn+".json")
 		js, err := getFileAsString(sess, fn+".json")
 		if err == nil {
-			var ks3 lesson
+			var ks3 Lesson
 			log.Printf("Found %s.json saved to S3.", fn)
 			json.Unmarshal([]byte(js), &ks3)
 			log.Printf("%+v", ks3)
@@ -123,7 +123,7 @@ func CreateLesson(num int) lesson {
 }
 
 //TODO - refactor - Merge all partials into leson (as mp3) and save to S3
-func mergeAudio(s *session.Session, k lesson, fn string) lesson {
+func mergeAudio(s *session.Session, k Lesson, fn string) Lesson {
 	partials := k.Partials
 	log.Println(partials)
 	merged := new(bytes.Buffer)
@@ -200,7 +200,7 @@ func mergeAudio(s *session.Session, k lesson, fn string) lesson {
 }
 
 // get mp3 file access link, save lesson as JSON to S3 with updated expiration
-func refreshS3(s *session.Session, ks3 *lesson, fn string) error {
+func refreshS3(s *session.Session, ks3 *Lesson, fn string) error {
 
 	link, err := getFileLink(s, fn+".mp3")
 	if err != nil {
