@@ -52,7 +52,7 @@ const (
 )
 
 // TODO - better handle gin HTTP codes
-func getLessonfromS3(c *gin.Context, n string) {
+func getLessonfromS3(c *gin.Context, n string) lesson {
 	var k lesson
 	var num int
 	cacheID := n
@@ -75,20 +75,18 @@ func getLessonfromS3(c *gin.Context, n string) {
 			// TODO - at minimum check k.AudioURL
 			if k.AudioURL == "" {
 				c.String(204, "No content")
-				return
+				return k
 			}
 			err = refreshS3(sess, &k, fn)
-			myCache.Set(cacheID, &k, cache.DefaultExpiration)
-			log.Println("lesson retrieved from S3 and cached.")
 			c.String(http.StatusOK, k.AudioURL)
-			return
+			return k
 		}
 		c.String(500, "Error reading file from S3")
-		return
+		return k
 	}
 	log.Println("Not found JSON ", fn+".json")
 	c.String(403, "Not found")
-	return
+	return k
 }
 
 // TODO - for lesson get JSON, check if each partial exists and merge into mp3 lesson, save
