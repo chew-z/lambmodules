@@ -18,7 +18,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/dmulholland/mp3lib"
-	"github.com/gin-gonic/gin"
 )
 
 type partial struct {
@@ -50,15 +49,10 @@ const (
 	voice          = "Maja"
 )
 
-// TODO - better handle gin HTTP codes
-func GetLessonfromS3(c *gin.Context, n string) Lesson {
+// GetLessonfromS3 TODO - better handle gin HTTP codes
+func GetLessonfromS3(num int) Lesson {
 	var k Lesson
 	var num int
-	if n == "" {
-		num = 0
-	} else {
-		num, _ = strconv.Atoi(n)
-	}
 	fn := fmt.Sprintf("lesson_%d", num)
 	// Initialize AWS Session
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
@@ -70,24 +64,14 @@ func GetLessonfromS3(c *gin.Context, n string) Lesson {
 		if err == nil {
 			json.Unmarshal([]byte(js), &k)
 			log.Printf("%+v", k)
-			// TODO - at minimum check k.AudioURL
-			if k.AudioURL == "" {
-				c.String(204, "No content")
-				return k
-			}
 			err = refreshS3(sess, &k, fn)
-			c.String(http.StatusOK, k.AudioURL)
-			return k
 		}
-		c.String(500, "Error reading file from S3")
-		return k
 	}
 	log.Println("Not found JSON ", fn+".json")
-	c.String(403, "Not found")
 	return k
 }
 
-// TODO - for lesson get JSON, check if each partial exists and merge into mp3 lesson, save
+// CreateLesson TODO - for lesson get JSON, check if each partial exists and merge into mp3 lesson, save
 func CreateLesson(num int) Lesson {
 	var k Lesson
 	fn := fmt.Sprintf("lesson_%d", num)
