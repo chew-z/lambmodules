@@ -9,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"sort"
-	"strconv"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -52,7 +51,6 @@ const (
 // GetLessonfromS3 TODO - better handle gin HTTP codes
 func GetLessonfromS3(num int) Lesson {
 	var k Lesson
-	var num int
 	fn := fmt.Sprintf("lesson_%d", num)
 	// Initialize AWS Session
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
